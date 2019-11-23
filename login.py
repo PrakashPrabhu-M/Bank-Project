@@ -23,7 +23,11 @@ def pin():
     print("Enter the correct PIN number")
     return pin()
 
-def withdrawl(T_am):
+def withdrawl(na,ph,accno,Tam):
+  name=na
+  phone=ph
+  acc=accno
+  T_am=Tam
   try:
     w_amount=int(input("\nEnter the withdrawl amount:"))
     if T_am - w_amount <= 5000:
@@ -31,10 +35,40 @@ def withdrawl(T_am):
       menu()
     else:
       T_am=T_am - w_amount
-      details()
+      details(name,phone,acc,T_am)
   except ValueError:
     print('Type an integer')
     return withdrawl()
+
+def deposit(na,ph,accno,Tam):
+  name=na
+  phone=ph
+  acc=accno
+  T_am=Tam
+  try:
+    D_amount=int(input("\nEnter the deposit amount:"))
+    if D_amount < 1000:
+      print("Amount should be more than 1000")
+      deposit()
+    else:
+      T_am=T_am + D_amount
+      details(name,phone,acc,T_am)
+  except ValueError:
+    print('Type an integer')
+    return deposit()
+
+def details(Na,Phno,accno,T_am):
+  print("\nAccount Details:")
+  print("\nName:",Na,"\nPhone no:",Phno,"Account no:",accno,"Total Amount:",T_am)
+  n=int(input("Enter 1 for back to menu:"))
+  
+  while(n!=1):
+    print("Enter correct option")
+    continue
+  if n==1:
+    menu()
+
+def mstatement():
 
 def menu(dic):
   try:
@@ -135,3 +169,4 @@ while beginrun:
     print('Invalid choice')
     beginrun=True
     continue
+
