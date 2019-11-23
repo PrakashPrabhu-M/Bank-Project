@@ -172,39 +172,50 @@ class Bank:
 
 users=[]
 usercount=-1
-beginrun=True
-while beginrun:
-    beginrun=False
-    try:
-        ch=int(input(('WELCOME'.center(50,'*')+'\nEnter your choice with numbers\n1.CREATE NEW ACCOUNT\n2.LOGIN\n')))
-    except ValueError:
-        print('Only numbers are allowed')
-        beginrun=True
-        continue
-    if ch==1:
-        usercount+=1
-        users.append(Bank())
-        users[usercount].create()
-        print("You're logged in\n")
-        users[usercount].menu()
-    elif ch==2:
-        print('You are about to login'.center(50,'*'))
-        logrn=True
-        while logrn:
-            logrn=False
-            try:
-                A_no=int(input('Type your account number: '))
-            except ValueError:
-                print('Only numbers')
-            for i in range(usercount+1):
-                if users[i].self.d['accno']==A_no:
-                    users[i].menu()
-                else:
-                    print('Not in list')
+
+def start():
+    beginrun=True
+    while beginrun:
+        beginrun=False
+        try:
+            ch=int(input(('WELCOME'.center(50,'*')+'\nEnter your choice with numbers\n1.CREATE NEW ACCOUNT\n2.LOGIN\n')))
+        except ValueError:
+            print('Only numbers are allowed')
+            beginrun=True
+            continue
+        if ch==1:
+            global usercount
+            usercount+=1
+            users.append(Bank())
+            users[usercount].create()
+            print("You're logged in\n")
+            users[usercount].menu()
+            return start()
+        elif ch==2:
+            if usercount==-1:
+                print('No users created yet')
+                return start()
+            print('You are about to login'.center(50,'*'))
+            logrn=True
+            while logrn:
+                logrn=False
+                try:
+                    A_no=int(input('Type your account number: '))
+                except ValueError:
+                    print('Only numbers')
                     logrn=True
-                    continue
+                for i in range(usercount+1):
+                    if users[i].self.d['accno']==A_no:
+                        users[i].menu()
+                        return start()
+                    else:
+                        print('Not in list')
+                        logrn=True
+                        continue
                         
-    else:
-        print('Invalid choice')
-        beginrun=True
-        continue
+        else:
+            print('Invalid choice')
+            beginrun=True
+            continue
+
+start()
