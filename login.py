@@ -1,62 +1,210 @@
-def accno():
-  try:
-    no=int(intput("Enter the name:"))
-    return no
-  except TypeError:
-    print("Enter the correct number")
-    accno()
+import random
 
-def name():
-  na=input("Enter the name:")
-  for i in na:
-    if ord(i) not in range(65,123):
-      print("Enter the correct name:") 
-      name()
-  return na
+class Bank:
+    def end(self):
+        pass
 
-def pas():
-  try:
-    pword=int(input("Enter the PIN no:"))
-    return pword
-  except TypeError:
-    print("Enter the correct PIN number")
-    pas()
+    def accno(self):
+        try:
+            no=int(input("Enter your account number: "))
+            return no
+        except ValueError:
+            print("Enter the correct number")
+            return self.accno()
 
-def withdrawl(T_am):
-  try:
-    w_amount=int(input("\nEnter the withdrawl amount:"))
+    def name(self):
+        na=input("Enter the name:")
+        for i in na:
+            if ord(i) not in range(65,123):
+                print("Name does'nt contains anything other than alphabets\n") 
+                return self.name()
+        return na
 
-    if T_am - w_amount <= 5000:
-      print("Insuffient Account balance:")
-      menu()
-    else:
-      T_am=T_am - w_amount
-      details()
+    def pin(self):
+        try:
+            pword=int(input("Enter the PIN no:"))
+            if len(str(pword))!=4:
+                print('A PIN number is a combination of 4 numbers\nSo try again\n')
+                return self.pin()
+            return pword
+        except ValueError:
+            print("\nEnter the correct PIN number\n")
+            return self.pin()
+
+    def withdrawl(self):
+        try:
+            w_amount=int(input("\nEnter the withdrawl amount: "))
+            if self.d['bal'] - w_amount <= 5000:
+                print("Insuffient Account balance")
+                return self.menu()
+            else:
+                self.d['bal']-=w_amount
+                return self.details()
+        except ValueError:
+            print('Type an integer\nTry again\n')
+            return self.withdrawl()
+
+    def deposit(self):
+        try:
+            D_amount=int(input("\nEnter the deposit amount:"))
+            if D_amount < 1000:
+                print("Amount should be more than 1000")
+                return self.deposit()
+            else:
+                self.d['bal']+=D_amount
+                return self.details()
+        except ValueError:
+            print('Type an integer')
+            return self.deposit()
+
+    def details(self):
+        print("\nAccount Details:")
+        print("\nName:",self.d['name'],"\nPhone no:",self.d['phno'],"\nAccount no:",self.d['acc_id'],"\nTotal Amount:",self.d['bal'])
+        input("\nPress ENTER to continue")
+        return self.menu()
+
+    def mstatement(self):
+        print('Comming soon...')
+        return self.menu()
+
+    def menu(self):
+        try:
+            print("1.Withdrawl \n2.Deposit \n3.Show Details \n4.Ministatement\n"+"0 to exit".center(25,'*'))
+            ch=int(input("\nEnter your choice: "))
+            if ch==1:
+                return self.withdrawl()
+            elif ch==2:
+                return self.deposit()
+            elif ch==3:
+                return self.details()
+            elif ch==4:
+                return self.mstatement()
+            elif ch==0:
+                return self.end()
+            else:
+                print("\nEnter the correct choice:")
+            return self.menu()
+
+        except ValueError:
+            print('Type an valid integer')
+            return self.menu()
+    
+
+
+    def login(self):
+        print('You are about to login'.center(50,'*'))
+        A_no=self.accno()
+        P_name=self.name()
+        pinno=self.pin()
+        if ((A_no in self.d.values()) and (P_name in self.d.values()) and (pinno in self.d.values())):
+            self.menu()
+        else:
+            print("\nInvalid account number or PIN\nTry again\n")
+            return self.login()
+
+    def create(self):
+        self.d={}
+        self.d['bal']=10000
+        self.d['acc_id']=random.randint(1000000000000000,9999999999999999)
+        print('ACCOUNT ID: {}'.format(self.d['acc_id']))
+
+        namerun=True
+        while namerun:
+            namerun=False
+            self.d['name']=input('Enter your name: ')
+            if self.d['name'].strip()=='':
+                print('Type something\n')
+                namerun=True
+                continue
+            for i in self.d['name'].lower():
+                if not 97<=ord(i)<=122:
+                    print('Enter a valid name (without numbers or symbols)\n')
+                    namerun=True
+                    break
+    
+        phrun=True
+        while phrun:
+            phrun=False
+            try:
+                self.d['phno']=int(input('Type your phone number: '))
+            except ValueError:
+                print('A phone number contains only numbers, not anything else\n')
+                phrun=True
+                continue
+            if str(self.d['phno']).strip=='':
+                print('Type something\n')
+                phrun=True
+                continue
+            if len(str(self.d['phno']))!=10:
+                print('A phone number is a combination of 10 numbers not more or less than that\n')
+                phrun=True
+                continue
+        
+        pinrun=True
+        while pinrun:
+            pinrun=False
+            try:
+                self.d['PIN']=int(input('Type your own PIN number: '))
+            except ValueError:
+                print('Type numbers not characters')
+                pinrun=True
+                continue
+            if self.d['PIN']<0:
+                print('Enter a positive interger')
+                pinrun=True
+                continue
+            elif len(str(self.d['PIN']))!=4:
+                print('A PIN contains 4 numbers\nTry again')
+                pinrun=True
+                continue
+
+        passrun=True
+        while passrun:
+            passrun=False
+            self.d['pass']=input('Type your Password: ')
+            if len(self.d['pass'])<8:
+                print('Password must atleast 8 characters long')
+                passrun=True
+                continue
+        print('Created Successfully')
 
 
 
-def menu():
-  try:
-    print("1.Withdrawl \n 2.Deposit \n 3.Show Details \n 4.Ministatement")
-    ch=int(input("\nEnter your choice:"))
+users=[]
+usercount=-1
+beginrun=True
+while beginrun:
+    beginrun=False
+    try:
+        ch=int(input(('WELCOME'.center(50,'*')+'\nEnter your choice with numbers\n1.CREATE NEW ACCOUNT\n2.LOGIN\n')))
+    except ValueError:
+        print('Only numbers are allowed')
+        beginrun=True
+        continue
     if ch==1:
-      withdrawl()
+        usercount+=1
+        users.append(Bank())
+        users[usercount].create()
+        print("You're logged in\n")
+        users[usercount].menu()
     elif ch==2:
-      deposit()
-    elif ch==3:
-      details()
-    elif ch==4:
-      mstatement()
+        print('You are about to login'.center(50,'*'))
+        logrn=True
+        while logrn:
+            logrn=False
+            try:
+                A_no=int(input('Type your account number: '))
+            except ValueError:
+                print('Only numbers')
+            for i in range(usercount+1):
+                if users[i].self.d['accno']==A_no:
+                    users[i].menu()
+                else:
+                    print('Not in list')
+                    logrn=True
+                    continue
+                        
     else:
-      print("\nEnter the correct choice:")
-      menu()
-
-
-def login():
-  A_no=accno()
-  P_name=name()
-  pin=pas()
-  if A_no in d and P_name in d and pin in d:
-    menu()
-  else:
-    print("Invalid account number or PIN ")
+        print('Invalid choice')
+        beginrun=True
+        continue
