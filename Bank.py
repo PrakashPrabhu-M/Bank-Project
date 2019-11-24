@@ -6,6 +6,8 @@ class Bank:
 
     def name(self):
         na=input("Enter the name:")
+        if na=='0':
+            return na
         for i in na:
             if ord(i) not in range(65,123):
                 print("Name does'nt contains anything other than alphabets\n") 
@@ -15,6 +17,8 @@ class Bank:
     def pin(self):
         try:
             pword=int(input("Enter the PIN no:"))
+            if pword==0:
+                return pword
             if len(str(pword))!=4:
                 print('A PIN number is a combination of 4 numbers\nSo try again\n')
                 return self.pin()
@@ -93,8 +97,11 @@ class Bank:
 
     def login(self):
         print('You are about to login'.center(50,'*'))
+        print('0 to enter welcome screen'.center(25,'*'))
         P_name=self.name()
         pinno=self.pin()
+        if P_name=='0' or pinno==0:
+            return self.end()
 
         if ((P_name == self.d['name']) and (pinno == self.d['PIN'])):
             self.d['acty'].append('logged in')
@@ -103,8 +110,9 @@ class Bank:
             print("\nInvalid account number or PIN\nTry again\n")
             return self.login()
 
-    def create(self):
+    def create(self,phno):
         self.d={}
+        self.d['phno']=phno
         self.d['acty']=[]
         self.d['bal']=10000
         self.d['acc_id']=random.randint(1000000000000000,9999999999999999)
@@ -124,23 +132,6 @@ class Bank:
                     namerun=True
                     break
     
-        phrun=True
-        while phrun:
-            phrun=False
-            try:
-                self.d['phno']=int(input('Type your phone number: '))
-            except ValueError:
-                print('A phone number contains only numbers, not anything else\n')
-                phrun=True
-                continue
-            if str(self.d['phno']).strip=='':
-                print('Type something\n')
-                phrun=True
-                continue
-            if len(str(self.d['phno']))!=10:
-                print('A phone number is a combination of 10 numbers not more or less than that\n')
-                phrun=True
-                continue
         
         pinrun=True
         while pinrun:
@@ -166,7 +157,7 @@ class Bank:
 
 users=[]
 usercount=-1
-
+ph=[]
 def start():
     beginrun=True
     while beginrun:
@@ -180,8 +171,30 @@ def start():
         if ch==1:
             global usercount
             usercount+=1
+            phrun=True
+            while phrun:
+                phrun=False
+                try:
+                    phno=int(input('Type your phone number: '))
+                except ValueError:
+                    print('A phone number contains only numbers, not anything else\n')
+                    phrun=True
+                    continue
+                if str(phno).strip=='':
+                    print('Type something\n')
+                    phrun=True
+                    continue
+                if len(str(phno))!=10:
+                    print('A phone number is a combination of 10 numbers not more or less than that\n')
+                    phrun=True
+                    continue
+                if phno in ph:
+                    print('Existing number\nTry another')
+                    phrun=True
+                    continue
+                ph.append(phno)
             users.append(Bank())
-            users[usercount].create()
+            users[usercount].create(phno)
             print("You're logged in\n")
             users[usercount].menu()
             return start()
@@ -194,16 +207,18 @@ def start():
             while logrn:
                 logrn=False
                 try:
-                    A_no=int(input('Type your account number: '))
+                    A_no=int(input('0 to exit\nType your account number: '))
                 except ValueError:
                     print('Only numbers')
                     logrn=True
+                if A_no==0:
+                    return start()
                 for i in range(usercount+1):
                     if users[i].d['acc_id']==A_no:
                         users[i].login()
                         return start()
                     else:
-                        print('Not in list')
+                        print('Not in list\n0 to exit')
                         logrn=True
                         continue
 
