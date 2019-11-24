@@ -4,13 +4,12 @@ class Bank:
     def end(self):
         pass
 
-    def accno(self):
-        try:
-            no=int(input("Enter your account number: "))
-            return no
-        except ValueError:
-            print("Enter the correct number")
-            return self.accno()
+    def getpd(self):
+        pd=input('Type the Password: ')
+        if len(pd)<8:
+            print('Password length is atleast 8 characters')
+            return self.getpd()
+        return pd
 
     def name(self):
         na=input("Enter the name:")
@@ -39,6 +38,7 @@ class Bank:
                 return self.menu()
             else:
                 self.d['bal']-=w_amount
+                self.d['acty'].append('Withdrawn: {} Remaining: {}'.format(w_amount,self.d['bal']))
                 return self.details()
         except ValueError:
             print('Type an integer\nTry again\n')
@@ -52,6 +52,7 @@ class Bank:
                 return self.deposit()
             else:
                 self.d['bal']+=D_amount
+                self.d['acty'].append('Deposited: {} Remaining: {}'.format(D_amount,self.d['bal']))
                 return self.details()
         except ValueError:
             print('Type an integer')
@@ -64,12 +65,18 @@ class Bank:
         return self.menu()
 
     def mstatement(self):
-        print('Comming soon...')
+        print('Your name: '+self.d['name'])
+        print('Your phone number:',self.d['phno'],'\n')
+        print('Your activities'.center(25,'*'))
+        for i in range(1,len(self.d['acty'])+1):
+            print(str(i)+'.'+self.d['acty'][i-1])
+            
+        input('Enter to continue')
         return self.menu()
 
     def menu(self):
         try:
-            print("1.Withdrawl \n2.Deposit \n3.Show Details \n4.Ministatement\n"+"0 to exit".center(25,'*'))
+            print("1.Withdrawl \n2.Deposit \n3.Show Details \n4.Ministatement\n"+"0 to enter welcome page".center(25,'*'))
             ch=int(input("\nEnter your choice: "))
             if ch==1:
                 return self.withdrawl()
@@ -93,17 +100,20 @@ class Bank:
 
     def login(self):
         print('You are about to login'.center(50,'*'))
-        A_no=self.accno()
         P_name=self.name()
         pinno=self.pin()
-        if ((A_no in self.d.values()) and (P_name in self.d.values()) and (pinno in self.d.values())):
+        pd=self.getpd()
+
+        if ((P_name == self.d['name']) and (pinno == self.d['PIN'] and (pd == self.d['pass']))):
+            self.d['acty'].append('logged in')
             self.menu()
         else:
-            print("\nInvalid account number or PIN\nTry again\n")
+            print("\nInvalid account number, PIN or password\nTry again\n")
             return self.login()
 
     def create(self):
         self.d={}
+        self.d['acty']=[]
         self.d['bal']=10000
         self.d['acc_id']=random.randint(1000000000000000,9999999999999999)
         print('ACCOUNT ID: {}'.format(self.d['acc_id']))
@@ -178,7 +188,7 @@ def start():
     while beginrun:
         beginrun=False
         try:
-            ch=int(input(('WELCOME'.center(50,'*')+'\nEnter your choice with numbers\n1.CREATE NEW ACCOUNT\n2.LOGIN\n')))
+            ch=int(input(('WELCOME'.center(50,'*')+'\nEnter your choice with numbers\n1.CREATE NEW ACCOUNT\n2.LOGIN\n\n'+'0 to exit'.center(25,'*'))))
         except ValueError:
             print('Only numbers are allowed')
             beginrun=True
@@ -205,13 +215,17 @@ def start():
                     print('Only numbers')
                     logrn=True
                 for i in range(usercount+1):
-                    if users[i].self.d['accno']==A_no:
-                        users[i].menu()
+                    if users[i].d['acc_id']==A_no:
+                        users[i].login()
                         return start()
                     else:
                         print('Not in list')
                         logrn=True
                         continue
+
+        elif ch==0:
+            print('Have a nice day'.center(50,'*'))
+            return
                         
         else:
             print('Invalid choice')
