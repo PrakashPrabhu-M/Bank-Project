@@ -4,13 +4,6 @@ class Bank:
     def end(self):
         pass
 
-    def getpd(self):
-        pd=input('Type the Password: ')
-        if len(pd)<8:
-            print('Password length is atleast 8 characters')
-            return self.getpd()
-        return pd
-
     def name(self):
         na=input("Enter the name:")
         for i in na:
@@ -102,13 +95,12 @@ class Bank:
         print('You are about to login'.center(50,'*'))
         P_name=self.name()
         pinno=self.pin()
-        pd=self.getpd()
 
-        if ((P_name == self.d['name']) and (pinno == self.d['PIN'] and (pd == self.d['pass']))):
+        if ((P_name == self.d['name']) and (pinno == self.d['PIN'])):
             self.d['acty'].append('logged in')
             self.menu()
         else:
-            print("\nInvalid account number, PIN or password\nTry again\n")
+            print("\nInvalid account number or PIN\nTry again\n")
             return self.login()
 
     def create(self):
@@ -168,14 +160,6 @@ class Bank:
                 pinrun=True
                 continue
 
-        passrun=True
-        while passrun:
-            passrun=False
-            self.d['pass']=input('Type your Password: ')
-            if len(self.d['pass'])<8:
-                print('Password must atleast 8 characters long')
-                passrun=True
-                continue
         print('Created Successfully')
 
 
